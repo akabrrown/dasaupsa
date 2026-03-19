@@ -1,0 +1,34 @@
+﻿.hero {
+  position: relative;
+  background-color: #D4A017;
+  color: #1a3a6b;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  overflow: hidden;
+}
+
+.heroContainer {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+
+

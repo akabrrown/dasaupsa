@@ -1,0 +1,29 @@
+﻿.adminPanel {
+  background-color: #f0f0f0;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.adminCard {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.adminButton {
+  background-color: #1A3A6B;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.adminButton:hover {
+  background-color: #D4A017;
+}
+
+
+
