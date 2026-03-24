@@ -230,7 +230,7 @@ export default function ProfileForm({ profile, onSave, onCancel }: ProfileFormPr
                 <Input
                   value={whatsapp_url}
                   onChange={(e) => setWhatsappUrl(e.target.value)}
-                  placeholder="WhatsApp URL/Number"
+                  placeholder="WhatsApp Nums (comma separated)"
                   className="pl-11 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all text-xs"
                 />
               </div>

@@ -1,41 +1,38 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Spinner } from './Spinner'
 import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function FileUpload({ 
   onUpload, 
+  onMultiUpload,
   value, 
+  multiple = false,
   folder = 'general',
   accept = "image/*",
-  allowedTypesLabel = "PNG, JPG or WebP (Max. 5MB)"
+  allowedTypesLabel = "PNG, JPG or WebP (Max. 10MB)"
 }: { 
-  onUpload: (url: string) => void, 
+  onUpload?: (url: string, fileName?: string) => void, 
+  onMultiUpload?: (files: { url: string, name: string }[]) => void,
   value?: string,
+  multiple?: boolean,
   folder?: string,
   accept?: string,
   allowedTypesLabel?: string
 }) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const isImage = (url: string) => {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url)
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // ... (rest of function remains same, except for Cloudinary auto upload)
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = e.target.files
+    if (!files || files.length === 0) return
 
     setUploading(true)
     setError(null)
-
-    // Validate file size (e.g., 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('File is too large. Max 5MB allowed.')
-      setUploading(false)
-      return
-    }
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
@@ -46,12 +43,16 @@ export default function FileUpload({
       return
     }
 
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('upload_preset', uploadPreset)
-    formData.append('folder', `DASA/${folder}`)
+    const uploadFile = async (file: File) => {
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error(`${file.name} is too large. Max 10MB allowed.`)
+      }
 
-    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('upload_preset', uploadPreset)
+      formData.append('folder', `DASA/${folder}`)
+
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
         {
@@ -62,24 +63,40 @@ export default function FileUpload({
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('Cloudinary Error:', errorData)
-        throw new Error(errorData.error?.message || 'Upload failed')
+        throw new Error(errorData.error?.message || `Upload failed for ${file.name}`)
       }
 
       const data = await response.json()
-      onUpload(data.secure_url)
+      return { url: data.secure_url, name: file.name }
+    }
+
+    try {
+      if (multiple && onMultiUpload) {
+        const uploadedResults = await Promise.all(Array.from(files).map(uploadFile))
+        onMultiUpload(uploadedResults)
+      } else if (onUpload) {
+        const result = await uploadFile(files[0])
+        onUpload(result.url, result.name)
+      }
     } catch (err: any) {
-      setError(err.message || 'Error uploading file.')
+      setError(err.message || 'Error uploading file(s).')
     } finally {
       setUploading(false)
+      // Reset the input value so the same file(s) can be selected again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
   }
 
+  // In multi-upload mode, always show the upload area (never the single-file preview)
+  const showPreview = !multiple && !!value
+
   return (
     <div className="space-y-4">
-      {value ? (
+      {showPreview ? (
         <div className="relative w-full aspect-video md:aspect-video bg-gray-50 rounded-2xl overflow-hidden group border border-gray-100">
-          {isImage(value) ? (
+          {isImage(value!) ? (
             <img src={value} alt="Uploaded file" className="w-full h-full object-contain" />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-blue-50/50 p-6 text-center">
@@ -92,7 +109,7 @@ export default function FileUpload({
           )}
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <button 
-              onClick={() => onUpload('')}
+              onClick={() => onUpload?.('')}
               className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg"
             >
               <X size={20} />
@@ -109,7 +126,9 @@ export default function FileUpload({
             {uploading ? (
               <div className="flex flex-col items-center">
                 <Spinner />
-                <p className="mt-4 text-sm font-bold text-DASA-black animate-pulse">Uploading to Cloudinary...</p>
+                <p className="mt-4 text-sm font-bold text-DASA-black animate-pulse">
+                  {multiple ? 'Uploading files to Cloudinary...' : 'Uploading to Cloudinary...'}
+                </p>
               </div>
             ) : (
               <>
@@ -117,18 +136,23 @@ export default function FileUpload({
                   <Upload size={24} />
                 </div>
                 <p className="mb-2 text-sm text-gray-700 font-bold">
-                  Click to upload <span className="text-DASA-orange">or drag and drop</span>
+                  {multiple 
+                    ? <>Click to select files <span className="text-DASA-orange">(multiple allowed)</span></>
+                    : <>Click to upload <span className="text-DASA-orange">or drag and drop</span></>
+                  }
                 </p>
                 <p className="text-xs text-gray-400 font-medium">{allowedTypesLabel}</p>
               </>
             )}
           </div>
           <input 
+            ref={fileInputRef}
             type="file" 
             className="hidden" 
             onChange={handleFileChange} 
             disabled={uploading} 
             accept={accept}
+            multiple={multiple}
           />
         </label>
       )}
@@ -142,7 +166,3 @@ export default function FileUpload({
     </div>
   )
 }
-
-
-
-

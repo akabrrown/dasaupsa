@@ -27,8 +27,40 @@ interface ResourceProps {
  */
 const getProxyUrl = (url: string, mode: 'open' | 'download', title: string): string => {
   if (!url || !url.includes('cloudinary.com')) return url
-  const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+  // Extract original filename from Cloudinary URL if possible
+  const originalFile = url.split('/').pop()?.split('.')?.[0] || 'file'
+  const sanitizedTitle = originalFile.replace(/[^a-z0-9]/gi, '_').toLowerCase()
   return `/api/resources/proxy?url=${encodeURIComponent(url)}&mode=${mode}&filename=${encodeURIComponent(sanitizedTitle)}`
+}
+
+/**
+ * Extracts and cleans the original filename from a Cloudinary URL,
+ * stripping out the random 6-character suffix and the file extension.
+ */
+const getOriginalFilename = (url: string, fallback: string) => {
+  if (!url) return fallback;
+  try {
+    const decodedUrl = decodeURIComponent(url);
+    const filenameWithExt = decodedUrl.split('/').pop() || fallback;
+    
+    // Strip extension
+    let clean = filenameWithExt.replace(/\.[^/.]+$/, "");
+    
+    // Strip Cloudinary 6-char random suffix (_a1b2c3)
+    clean = clean.replace(/_[a-zA-Z0-9]{6}$/, "");
+    
+    const finalName = clean.replace(/[-_]/g, ' ').trim();
+    
+    // If the name looks like a random hash (long, no spaces), fallback to course title
+    if (finalName.length > 15 && !finalName.includes(' ')) {
+      return fallback;
+    }
+    
+    return finalName || fallback;
+  } catch {
+    const simple = url.split('/').pop()?.split('.')[0]?.replace(/[-_]/g, ' ') || fallback;
+    return (simple.length > 15 && !simple.includes(' ')) ? fallback : simple;
+  }
 }
 
 export default function ResourceCard({ id, title, course_code, year, semester, type, file_url, download_count, program, isBookmarked = false }: ResourceProps) {
@@ -88,8 +120,11 @@ export default function ResourceCard({ id, title, course_code, year, semester, t
             </button>
           </div>
         </div>
-        <CardTitle className="text-lg font-bold text-DASA-black group-hover:text-DASA-orange transition-colors line-clamp-2 leading-snug">
-          {title}
+        <CardTitle 
+          className="text-lg font-bold text-DASA-black group-hover:text-DASA-orange transition-colors line-clamp-2 leading-snug" 
+          title={title.includes('|') ? title.split('|')[1].trim() : getOriginalFilename(file_url, title)}
+        >
+          {title.includes('|') ? title.split('|')[1].trim() : getOriginalFilename(file_url, title)}
         </CardTitle>
       </CardHeader>
 
@@ -97,7 +132,9 @@ export default function ResourceCard({ id, title, course_code, year, semester, t
         <div className="space-y-3">
           <div className="flex items-center text-xs text-gray-500">
             <BookOpen size={14} className="mr-2 text-DASA-orange shrink-0" />
-            <span className="truncate">{course_code} {program && `• ${program.replace('BSc ', '')}`}</span>
+            <span className="truncate" title={`${title} - ${course_code}`}>
+              <span className="font-bold text-gray-700">{title}</span> • {course_code} {program && `• ${program.replaceAll('BSc ', '')}`}
+            </span>
           </div>
           <div className="flex items-center text-xs text-gray-500">
             <Clock size={14} className="mr-2 text-DASA-orange shrink-0" />
@@ -106,11 +143,7 @@ export default function ResourceCard({ id, title, course_code, year, semester, t
         </div>
       </CardContent>
 
-      <CardFooter className="pt-4 border-t border-gray-50 flex items-center justify-between gap-2">
-        <div className="flex items-center text-gray-400 text-[10px] font-medium uppercase tracking-tight">
-          <Download size={12} className="mr-1" />
-          {download_count} Downloads
-        </div>
+      <CardFooter className="pt-4 border-t border-gray-50 flex items-center justify-end gap-2">
         <div className="flex gap-2">
           <button
             onClick={() => handleAction('open')}

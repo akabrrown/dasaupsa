@@ -91,7 +91,7 @@ export default function AdminLoginPage() {
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <Input
                   type="email"
-                  placeholder="admin@DASA.org"
+                  placeholder="[EMAIL_ADDRESS]"
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   className="pl-12 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all"
@@ -111,7 +111,7 @@ export default function AdminLoginPage() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <Input
                   type="password"
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="[PASSWORD]"
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                   className="pl-12 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all"
@@ -138,7 +138,7 @@ export default function AdminLoginPage() {
 
           <div className="mt-10 pt-8 border-t border-gray-100 text-center">
             <p className="text-gray-400 text-xs font-medium">
-              &copy; {new Date().getFullYear()} DASA â€¢ Secure Management System
+              &copy; {new Date().getFullYear()} DASA Secure Management System
             </p>
           </div>
         </motion.div>

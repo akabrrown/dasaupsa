@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Lock, Loader2, CheckCircle2, AlertCircle, ShieldAlert } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import PasswordStrengthMeter from '@/components/admin/PasswordStrengthMeter'
 
 export default function ChangePasswordPage() {
   const [password, setPassword] = useState('')
@@ -24,6 +25,18 @@ export default function ChangePasswordPage() {
 
     if (password.length < 8) {
       setStatus({ type: 'error', message: 'Password must be at least 8 characters long.' })
+      return
+    }
+
+    // Basic strength check
+    const strength = [
+      /[a-z]/.test(password) && /[A-Z]/.test(password),
+      /\d/.test(password),
+      /[^a-zA-Z\d]/.test(password)
+    ].filter(Boolean).length
+
+    if (strength < 2 && password.length < 12) {
+      setStatus({ type: 'error', message: 'Please choose a stronger password with a mix of characters.' })
       return
     }
 
@@ -90,6 +103,7 @@ export default function ChangePasswordPage() {
                 required
               />
             </div>
+            <PasswordStrengthMeter password={password} />
           </div>
 
           <div className="space-y-2">
@@ -119,6 +133,23 @@ export default function ChangePasswordPage() {
             )}
           </Button>
         </form>
+
+        <div className="mt-10 pt-8 border-t border-gray-100">
+          <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Security Best Practices</h3>
+          <ul className="space-y-2">
+            {[
+              'Use a unique password not used on other sites',
+              'Mix uppercase, lowercase, numbers, and symbols',
+              'Avoid common words or personal info (names, birthdays)',
+              'Consider using a phrase (e.g., Green!Mountain@42)'
+            ].map((tip, i) => (
+              <li key={i} className="flex items-start gap-2 text-[11px] text-gray-500 font-medium">
+                <div className="w-1 h-1 rounded-full bg-DASA-orange mt-1.5 shrink-0" />
+                {tip}
+              </li>
+            ))}
+          </ul>
+        </div>
       </motion.div>
     </div>
   )
