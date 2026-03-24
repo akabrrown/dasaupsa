@@ -5,8 +5,15 @@ import { createClient } from '@supabase/supabase-js'
  * This client does not use cookies and is safe to use in any server context.
  */
 export function createPublicClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
-  return createClient(supabaseUrl, supabaseKey)
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('CRITICAL: Supabase environment variables are missing!', { 
+      hasUrl: !!supabaseUrl, 
+      hasKey: !!supabaseKey 
+    })
+  }
+
+  return createClient(supabaseUrl || '', supabaseKey || '')
 }

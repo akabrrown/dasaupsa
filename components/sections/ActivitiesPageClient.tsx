@@ -29,8 +29,8 @@ export default function ActivitiesPageClient({ initialActivities }: ActivitiesPa
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-DASA-black">Our Activities</h1>
           <p className="text-DASA-black/80 text-lg max-w-2xl mx-auto leading-relaxed">
-            From coding hackathons to social mixers, stay updated with all the 
-            exciting events happening within the DASA community.
+            Stay updated with all the exciting events and activities happening 
+            within the DASA community.
           </p>
           
           <div className="grid grid-cols-2 lg:flex justify-center gap-4 md:gap-8 mt-10">
