@@ -22,12 +22,14 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
   const [title, setTitle] = useState(tutorial.title || '')
   const [description, setDescription] = useState(tutorial.description || '')
   const [videoUrl, setVideoUrl] = useState(tutorial.video_url || '')
-  const [thumbnailUrl, setThumbnailUrl] = useState(tutorial.thumbnail_url || '')
   const [course, setCourse] = useState(tutorial.course_code || '')
   const [semester, setSemester] = useState(tutorial.semester || '1')
   const [year, setYear] = useState(tutorial.year || '1')
   const [lecturer, setLecturer] = useState(tutorial.lecturer || '')
-  const [programId, setProgramId] = useState(tutorial.program_id || '')
+  const [selectedProgramNames, setSelectedProgramNames] = useState<string[]>(() => {
+    if (tutorial.program) return tutorial.program.split(',').map((s: string) => s.trim())
+    return []
+  })
   const [programs, setPrograms] = useState<any[]>([])
   const [loadingPrograms, setLoadingPrograms] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -35,20 +37,29 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
 
   useEffect(() => {
     async function loadPrograms() {
-      const { data } = await getPrograms()
-      if (data) {
-        setPrograms(data)
-        if (!programId && data.length > 0) {
-          setProgramId(data[0].id)
+      try {
+        const { data, error } = await getPrograms()
+        if (error) {
+          console.error('[TutorialForm] Failed to load programs:', error)
         }
+        if (data && data.length > 0) {
+          setPrograms(data)
+          // If editing and we don't have program names but we have program_id, recover name
+          if (tutorial.id && selectedProgramNames.length === 0 && tutorial.program_id) {
+            const matched = data.find(p => p.id === tutorial.program_id)
+            if (matched) setSelectedProgramNames([matched.name])
+          }
+        }
+      } catch (err) {
+        console.error('[TutorialForm] Error loading programs:', err)
       }
       setLoadingPrograms(false)
     }
     loadPrograms()
-  }, [programId])
+  }, [])
 
   const handleSave = async () => {
-    if (!title || !videoUrl || !course || !lecturer || !programId) {
+    if (!title || !videoUrl || !course || !lecturer || selectedProgramNames.length === 0) {
       setError('Please fill in all required fields (Title, Video URL, Course, Lecturer, Program).')
       return
     }
@@ -56,14 +67,17 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
     setLoading(true)
     setError(null)
 
+    // Resolve primary program ID for backward compatibility
+    const primaryProgram = programs.find(p => selectedProgramNames.includes(p.name))
+    const primaryProgramId = primaryProgram ? primaryProgram.id : null
+
     const payload = {
       title,
       description,
       video_url: videoUrl,
-      thumbnail_url: thumbnailUrl,
       course_code: course,
-      program_id: programId,
-      program: programs.find(p => p.id === programId)?.name, // Sync legacy field
+      program_id: primaryProgramId,
+      program: selectedProgramNames.join(', '), // Sync legacy field for multi-program support
       semester: parseInt(semester.toString()),
       year: parseInt(year.toString()),
       lecturer,
@@ -85,6 +99,7 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
       await revalidateData('tutorials')
       onSave()
     } catch (err: any) {
+      console.error('[TutorialForm] Save error:', err)
       setError(err.message || 'Failed to save tutorial.')
     } finally {
       setLoading(false)
@@ -134,6 +149,17 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
               </div>
 
               <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 ml-1 uppercase tracking-wider">Video Upload (Direct)</label>
+                <FileUpload 
+                  onUpload={setVideoUrl} 
+                  value={videoUrl} 
+                  folder="tutorials/videos"
+                  accept="video/*"
+                  allowedTypesLabel="Video files (MP4, MOV, etc. Max 100MB)"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700 ml-1 uppercase tracking-wider">Video URL (YouTube/Drive) *</label>
                 <div className="relative">
                   <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -144,15 +170,6 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
                     className="pl-12 py-6 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all"
                   />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 ml-1 uppercase tracking-wider">Thumbnail Image</label>
-                <FileUpload 
-                  onUpload={setThumbnailUrl} 
-                  value={thumbnailUrl} 
-                  folder="tutorials" 
-                />
               </div>
             </div>
 
@@ -190,23 +207,41 @@ export default function TutorialForm({ tutorial, onSave, onCancel }: TutorialFor
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 ml-1 uppercase tracking-wider">Program *</label>
-                <div className="relative">
-                  <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <select
-                    value={programId}
-                    onChange={(e) => setProgramId(e.target.value)}
-                    disabled={loadingPrograms}
-                    className="w-full pl-12 pr-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all text-sm font-medium h-[52px] appearance-none cursor-pointer"
-                  >
-                    {loadingPrograms ? (
-                      <option>Loading programs...</option>
-                    ) : (
-                      programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)
-                    )}
-                  </select>
-                </div>
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-gray-700 ml-1 uppercase tracking-wider">Programs *</label>
+                {loadingPrograms ? (
+                  <div className="h-[52px] w-full bg-gray-50 animate-pulse rounded-2xl"></div>
+                ) : programs.length === 0 ? (
+                  <p className="text-xs text-red-500 font-bold p-3 bg-red-50 rounded-xl">
+                    No programs found. Please add programs first.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {programs.map(p => {
+                      const isSelected = selectedProgramNames.includes(p.name);
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            if (isSelected) {
+                              setSelectedProgramNames(prev => prev.filter(n => n !== p.name))
+                            } else {
+                              setSelectedProgramNames(prev => [...prev, p.name])
+                            }
+                          }}
+                          className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                            isSelected 
+                              ? 'bg-DASA-orange border-DASA-orange text-white shadow-md shadow-DASA-orange/20' 
+                              : 'bg-white border-gray-200 text-gray-600 hover:border-DASA-orange hover:text-DASA-orange'
+                          }`}
+                        >
+                          {p.name}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">

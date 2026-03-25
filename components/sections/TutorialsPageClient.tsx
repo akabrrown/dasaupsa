@@ -26,11 +26,15 @@ export default function TutorialsPageClient({ initialTutorials }: TutorialsPageC
   }, [])
 
   const filteredTutorials = initialTutorials.filter((t: any) => {
-    const programName = t.programs?.name || t.program;
-    return (t.title.toLowerCase().includes(search.toLowerCase()) || 
-     (t.description && t.description.toLowerCase().includes(search.toLowerCase())) ||
-     (t.lecturer && t.lecturer.toLowerCase().includes(search.toLowerCase()))) &&
-    (selectedProgram === 'All' || programName === selectedProgram)
+    const programName = t.program || t.programs?.name || '';
+    const matchesSearch = (t.title.toLowerCase().includes(search.toLowerCase()) || 
+      (t.description && t.description.toLowerCase().includes(search.toLowerCase())) ||
+      (t.lecturer && t.lecturer.toLowerCase().includes(search.toLowerCase())));
+    
+    const matchesProgram = selectedProgram === 'All' || 
+      (programName && programName.split(',').map((s: string) => s.trim()).includes(selectedProgram));
+    
+    return matchesSearch && matchesProgram;
   })
 
   return (

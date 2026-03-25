@@ -207,13 +207,13 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
              </div>
           ) : (
             <>
-              {(!search || currentCourse) && filteredResources.length > 0 && renderBreadcrumbs()}
+              {filteredResources.length > 0 && renderBreadcrumbs()}
 
               <AnimatePresence mode="wait">
                 {filteredResources.length > 0 ? (
                   <>
-                    {/* VIEW 1: All Courses Folders */}
-                    {!currentCourse && !search && (
+                    {/* VIEW 1: All Courses Folders (Shown if no course is selected) */}
+                    {!currentCourse && (
                       <motion.div 
                         key="courses-view"
                         initial={{ opacity: 0, y: 10 }}
@@ -243,8 +243,8 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                       </motion.div>
                     )}
 
-                    {/* VIEW 2: Inside a Course (Shows Slides/Past Qs folders) */}
-                    {currentCourse && !currentFolderType && !search && (
+                    {/* VIEW 2: Inside a Course (Shows Slides/Past Qs folders) - Only shown if no folder type is selected and no search OR if course is explicitly selected */}
+                    {currentCourse && !currentFolderType && (
                       <motion.div 
                         key="types-view"
                         initial={{ opacity: 0, y: 10 }}
@@ -286,8 +286,8 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                       </motion.div>
                     )}
 
-                    {/* VIEW 3: Files inside a specific Type Folder OR Search Results */}
-                    {((currentCourse && currentFolderType) || search) && (
+                    {/* VIEW 3: Files inside a specific Type Folder */}
+                    {(currentCourse && currentFolderType) && (
                       <motion.div 
                         key="files-view"
                         initial={{ opacity: 0 }}
@@ -297,7 +297,6 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                       >
                         {filteredResources
                           .filter(r => {
-                            if (search) return true; // Show all matching search
                             const getCourseStr = (res: any) => {
                               const courseName = res.title.split('|')[0].trim()
                               return res.course_code ? `${courseName} (${res.course_code})` : (courseName || 'Uncategorized')

@@ -44,8 +44,11 @@ export default function FileUpload({
     }
 
     const uploadFile = async (file: File) => {
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error(`${file.name} is too large. Max 10MB allowed.`)
+      const isVideo = file.type.startsWith('video/')
+      const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024 // 100MB for video, 10MB for others
+      
+      if (file.size > maxSize) {
+        throw new Error(`${file.name} is too large. Max ${maxSize / (1024 * 1024)}MB allowed.`)
       }
 
       const formData = new FormData()

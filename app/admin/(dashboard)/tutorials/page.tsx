@@ -132,10 +132,10 @@ export default function AdminTutorialsPage() {
                         <User size={14} className="text-DASA-orange" />
                         <span className="font-medium">{tut.lecturer}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                      <div className="flex items-center gap-2 text-[11px] text-gray-400">
                         <BookOpen size={14} className="text-DASA-orange" />
-                        <span className="font-medium">
-                          {Array.isArray(tut.programs) ? tut.programs[0]?.name : tut.programs?.name || tut.program || 'Common'}
+                        <span className="font-bold text-DASA-black/70">
+                          {tut.program || (Array.isArray(tut.programs) ? tut.programs.map((p: any) => p.name).join(', ') : tut.programs?.name) || 'Common'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-gray-400 pl-1">
