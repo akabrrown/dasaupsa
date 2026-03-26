@@ -44,6 +44,7 @@ export const metadata: Metadata = {
     icon: "/dasa-logo.jpg",
     apple: "/dasa-logo.jpg",
   },
+  themeColor: '#FF8C61',
 };
 
 import ConditionalLayout from '@/components/layout/ConditionalLayout'

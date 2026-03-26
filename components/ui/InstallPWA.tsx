@@ -10,9 +10,7 @@ export default function InstallPWA() {
 
   useEffect(() => {
     const handler = (e: any) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault()
-      // Stash the event so it can be triggered later.
       setDeferredPrompt(e)
       setShowInstall(true)
     }
@@ -20,26 +18,34 @@ export default function InstallPWA() {
     window.addEventListener('beforeinstallprompt', handler)
 
     // Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true
+    if (isStandalone) {
        setShowInstall(false)
+    } else {
+      // Force show the button after a shorter delay if not on admin path and not mobile-installed
+      const timer = setTimeout(() => {
+        if (!deferredPrompt && !isStandalone) {
+          setShowInstall(true)
+        }
+      }, 2000)
+      return () => clearTimeout(timer)
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handler)
-  }, [])
+  }, [deferredPrompt])
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return
-
-    // Show the install prompt
-    deferredPrompt.prompt()
-    
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice
-    console.log(`User response to the install prompt: ${outcome}`)
-    
-    // We've used the prompt, and can't use it again, throw it away
-    setDeferredPrompt(null)
-    setShowInstall(false)
+    if (deferredPrompt) {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null)
+        setShowInstall(false)
+      }
+    } else {
+      // Manual instructions for iOS/other browsers
+      alert('To install this app:\n\n1. Open in Safari/Chrome\n2. Tap the Share button (iOS) or Menu\n3. Select "Add to Home Screen"\n\nEnjoy a faster experience!')
+    }
   }
 
   return (
