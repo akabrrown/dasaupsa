@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { navLinks } from '@/lib/constants'
+import InstallPWA from '@/components/ui/InstallPWA'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -40,6 +41,9 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
+            <li>
+              <InstallPWA />
+            </li>
           </ul>
 
           {/* Mobile Toggle */}
@@ -73,6 +77,9 @@ export default function Navbar() {
                     </Link>
                   </li>
                 ))}
+                <li className="pt-4 border-t border-white/10">
+                  <InstallPWA />
+                </li>
               </ul>
             </motion.div>
           )}
