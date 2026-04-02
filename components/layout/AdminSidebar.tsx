@@ -66,8 +66,7 @@ export default function AdminSidebar({ mustChangePassword = false }: { mustChang
             alt="Logo" 
             width={32} 
             height={32} 
-            className="rounded-full object-cover" 
-            style={{ height: 'auto', width: 'auto' }}
+            className="rounded-full object-cover h-8 w-8" 
           />
           <span className="font-bold text-white text-sm">DASA Admin</span>
         </Link>
@@ -99,8 +98,7 @@ export default function AdminSidebar({ mustChangePassword = false }: { mustChang
             alt="DASA Logo" 
             width={48} 
             height={48} 
-            className="rounded-full object-cover shadow-xl ring-2 ring-DASA-orange/20" 
-            style={{ height: 'auto', width: 'auto' }}
+            className="rounded-full object-cover shadow-xl ring-2 ring-DASA-orange/20 h-12 w-12" 
           />
           <div>
             <h2 className="text-lg font-black text-white leading-tight">Admin Panel</h2>

@@ -62,10 +62,11 @@ export default function AdminLoginPage() {
         >
           <div className="text-center mb-10">
             <div className="inline-flex items-center justify-center w-64 h-64 mb-6 relative">
-              <Image 
+                <Image 
                 src="/dasa-logo.jpg" 
                 alt="DASA Logo" 
                 fill
+                sizes="(max-width: 768px) 100vw, 256px"
                 className="rounded-lg object-contain shadow-xl" 
                 priority
               />

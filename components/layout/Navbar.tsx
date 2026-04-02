@@ -21,8 +21,7 @@ export default function Navbar() {
               alt="DASA Logo" 
               width={64} 
               height={64} 
-              className="rounded-lg object-cover shadow-sm" 
-              style={{ height: 'auto', width: 'auto' }}
+              className="rounded-lg object-cover shadow-sm h-16 w-16" 
               priority 
             />
           </Link>

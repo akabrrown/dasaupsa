@@ -14,8 +14,7 @@ export default function Footer() {
             alt="DASA Logo" 
             width={40} 
             height={40} 
-            className="rounded-full object-cover shadow-md group-hover:scale-105 transition-transform" 
-            style={{ height: 'auto', width: 'auto' }}
+            className="rounded-full object-cover shadow-md group-hover:scale-105 transition-transform h-10 w-10" 
           />
           <div className="flex flex-col">
             <span className="text-xs md:text-sm font-extrabold text-DASA-orange leading-tight uppercase tracking-wide">Department of Accounting Student Association</span>
