@@ -18,12 +18,17 @@ export default function TutorialsPageClient({ initialTutorials }: TutorialsPageC
 
   useEffect(() => {
     async function fetchPrograms() {
-      const { data } = await getPrograms()
-      if (data) setPrograms(data)
+      try {
+        const result = await getPrograms()
+        if (result?.data) setPrograms(result.data)
+      } catch (err) {
+        console.error('Failed to fetch programs:', err)
+      }
       setLoading(false)
     }
     fetchPrograms()
   }, [])
+
 
   const filteredTutorials = initialTutorials.filter((t: any) => {
     const programName = t.program || t.programs?.name || '';
