@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
@@ -16,7 +16,6 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://dasaupsa.com'),
   title: {
     default: "DASA - Department of Accounting Students Association",
     template: "%s | DASA"
@@ -45,9 +44,6 @@ export const metadata: Metadata = {
     icon: "/dasa-logo.jpg",
     apple: "/dasa-logo.jpg",
   },
-};
-
-export const viewport: Viewport = {
   themeColor: '#FF8C61',
 };
 

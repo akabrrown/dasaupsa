@@ -1,9 +1,9 @@
-﻿import { createServerClient } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export default async function proxy(req: NextRequest) {
-  let res = NextResponse.next({
+  let serverResponse = NextResponse.next({
     request: {
       headers: req.headers,
     },
@@ -14,7 +14,7 @@ export default async function proxy(req: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('your_supabase_project_url')) {
-    return res
+    return serverResponse
   }
 
   const supabase = createServerClient(
@@ -27,13 +27,13 @@ export default async function proxy(req: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value))
-          res = NextResponse.next({
+          serverResponse = NextResponse.next({
             request: {
               headers: req.headers,
             },
           })
           cookiesToSet.forEach(({ name, value, options }) =>
-            res.cookies.set(name, value, options)
+            serverResponse.cookies.set(name, value, options)
           )
         },
       },
@@ -55,7 +55,7 @@ export default async function proxy(req: NextRequest) {
     console.log(`[Proxy] Authenticated access to ${pathname} as ${user.email}`)
   }
 
-  return res
+  return serverResponse
 }
 
 export const config = {

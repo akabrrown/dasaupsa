@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Calendar, MapPin, Clock, ChevronLeft, Share2, Bookmark, Image as ImageIcon, Sparkles } from 'lucide-react'
+import { Calendar, MapPin, Clock, ChevronLeft, Share2, Bookmark, Image as ImageIcon, FileText } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
@@ -120,10 +120,10 @@ export default function ActivityDetailClient({ activity }: ActivityDetailClientP
             {/* Description Section */}
             <div className="bg-white rounded-[32px] p-8 md:p-10 border border-gray-100 shadow-sm">
               <h2 className="text-2xl font-bold text-DASA-black mb-6 flex items-center gap-3">
-                <Sparkles className="text-DASA-orange" />
+                <FileText className="text-DASA-orange" size={24} />
                 Event Description
               </h2>
-              <div className="prose prose-blue max-w-none text-gray-600 whitespace-pre-line text-lg leading-relaxed">
+              <div className="prose prose-neutral max-w-none text-gray-600 whitespace-pre-line text-lg leading-relaxed">
                 {activity.description}
               </div>
             </div>
@@ -181,7 +181,7 @@ export default function ActivityDetailClient({ activity }: ActivityDetailClientP
               <h3 className="text-lg font-bold text-DASA-black mb-4">Need Help?</h3>
               <p className="text-sm text-gray-500 mb-6">If you have questions about this event, feel free to contact the DASA organizing committee.</p>
               <Link 
-                href="mailto:contact@DASA.edu.gh"
+                href="mailto:dasaupsa0@gmail.com"
                 className="flex items-center justify-center w-full py-3 border-2 border-dashed border-gray-200 text-gray-500 font-bold rounded-xl hover:border-DASA-black hover:text-DASA-black transition-all bg-white"
               >
                 Contact Organizers

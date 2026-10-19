@@ -19,11 +19,35 @@ const config: Config = {
     },
     extend: {
       colors: {
-        'DASA-orange': '#FF6B35', // Bright orange for primary color
-        'DASA-black': '#000000', // Pure black for contrast
+        'DASA-orange': {
+          DEFAULT: '#FF6B35',
+          50: '#FFF0EA',
+          100: '#FFE1D5',
+          200: '#FFC3AB',
+          300: '#FFA581',
+          400: '#FF8757',
+          500: '#FF6B35',
+          600: '#E66030',
+          700: '#CC562A',
+          800: '#994020',
+          900: '#662B15',
+        },
+        'DASA-black': {
+          DEFAULT: '#000000',
+          50: '#F2F2F2',
+          100: '#E6E6E6',
+          200: '#CCCCCC',
+          300: '#B3B3B3',
+          400: '#999999',
+          500: '#808080',
+          600: '#666666',
+          700: '#4D4D4D',
+          800: '#333333',
+          900: '#1A1A1A',
+        },
         'white': '#FFFFFF',
-        'light-orange': '#FFF3E0', // Light orange background
-        'border-gray': '#E2E8F0', // Keep neutral border
+        'light-orange': '#FFF0EA', // Synced with DASA-orange-50
+        'border-gray': '#e5e7eb',
       },
       borderRadius: {
         lg: "var(--radius)",

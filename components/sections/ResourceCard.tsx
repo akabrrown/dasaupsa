@@ -95,10 +95,10 @@ export default function ResourceCard({ id, title, course_code, year, semester, t
   }
 
   return (
-    <Card className="overflow-hidden glass-card hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-none group flex flex-col h-full border-l-4 border-l-transparent hover:border-l-DASA-orange rounded-[24px]">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start mb-2">
-          <Badge className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border-none ${isSlide ? 'bg-blue-50 text-DASA-black' : 'bg-orange-50 text-orange-700'}`}>
+    <Card className="overflow-hidden bg-white shadow-sm border border-gray-200 hover:border-DASA-orange/40 hover:shadow-md transition-all duration-200 group flex flex-col h-full rounded-xl">
+      <CardHeader className="pb-3 pt-5 px-5">
+        <div className="flex justify-between items-start mb-3">
+          <Badge className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${isSlide ? 'bg-gray-100 text-gray-800 border-gray-200' : 'bg-orange-50 text-DASA-orange border-DASA-orange/25'}`}>
             {isSlide ? 'Lecture Slide' : 'Past Question'}
           </Badge>
           <div className="flex gap-1">
@@ -109,7 +109,7 @@ export default function ResourceCard({ id, title, course_code, year, semester, t
             <button
               onClick={handleBookmark}
               disabled={loading}
-              className={`p-2 rounded-lg transition-all ${bookmarked ? 'bg-DASA-orange text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+              className={`p-1.5 rounded-md transition-colors ${bookmarked ? 'bg-DASA-orange text-white' : 'bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-DASA-black'}`}
               title={bookmarked ? "Remove Bookmark" : "Bookmark"}
             >
               {loading && actionType === 'bookmark' ? (
@@ -121,52 +121,52 @@ export default function ResourceCard({ id, title, course_code, year, semester, t
           </div>
         </div>
         <CardTitle 
-          className="text-lg font-bold text-DASA-black group-hover:text-DASA-orange transition-colors line-clamp-2 leading-snug" 
+          className="text-base font-bold text-gray-900 group-hover:text-DASA-orange transition-colors line-clamp-2 leading-snug" 
           title={title.includes('|') ? title.split('|')[1].trim() : getOriginalFilename(file_url, title)}
         >
           {title.includes('|') ? title.split('|')[1].trim() : getOriginalFilename(file_url, title)}
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="grow pb-4">
-        <div className="space-y-3">
-          <div className="flex items-center text-xs text-gray-500">
-            <BookOpen size={14} className="mr-2 text-DASA-orange shrink-0" />
+      <CardContent className="grow pb-5 px-5">
+        <div className="space-y-2">
+          <div className="flex items-center text-[13px] text-gray-500 font-medium">
+            <BookOpen size={14} className="mr-2 text-gray-300 shrink-0" />
             <span className="truncate" title={`${title} - ${course_code}`}>
-              <span className="font-bold text-gray-700">{title}</span> • {course_code} {program && `• ${program.replaceAll('BSc ', '')}`}
+              <span className="text-gray-700">{course_code}</span> {program && `• ${program.replaceAll('BSc ', '')}`}
             </span>
           </div>
-          <div className="flex items-center text-xs text-gray-500">
-            <Clock size={14} className="mr-2 text-DASA-orange shrink-0" />
-            <span>Sem {semester} • {year}</span>
+          <div className="flex items-center text-[13px] text-gray-500 font-medium">
+            <Clock size={14} className="mr-2 text-gray-300 shrink-0" />
+            <span>Sem {semester} • Year {year}</span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="pt-4 border-t border-gray-50 flex items-center justify-end gap-2">
-        <div className="flex gap-2">
+      <CardFooter className="pt-4 pb-5 px-5 border-t border-gray-100 flex items-center justify-end gap-2 mt-auto">
+        <div className="flex gap-2 w-full">
           <button
             onClick={() => handleAction('open')}
             disabled={loading}
             title="Open in new tab"
-            className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 text-DASA-black text-xs font-bold rounded-lg hover:bg-gray-200 transition-all disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-50 text-gray-700 text-[13px] font-semibold rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-50 border border-gray-200"
           >
             {loading && actionType === 'open' ? (
-              <Loader2 size={13} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin" />
             ) : (
-              <ExternalLink size={13} />
+              <ExternalLink size={14} />
             )}
             Open
           </button>
           <button
             onClick={() => handleAction('download')}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-2 bg-DASA-black text-white text-xs font-bold rounded-lg hover:bg-DASA-orange transition-all shadow-sm disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-DASA-black text-white text-[13px] font-semibold rounded-lg hover:bg-DASA-orange active:scale-[0.98] transition-all disabled:opacity-50 shadow-sm"
           >
             {loading && actionType === 'download' ? (
-              <Loader2 size={13} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin" />
             ) : (
-              <FileText size={13} />
+              <Download size={14} />
             )}
             Download
           </button>

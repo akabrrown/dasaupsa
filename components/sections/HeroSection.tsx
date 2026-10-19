@@ -1,53 +1,53 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Sparkles } from 'lucide-react'
+
+import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[45vh] md:min-h-[55vh] flex items-center justify-center overflow-hidden py-12 px-4 mt-16 lg:mt-0">
-      {/* Background Image - Now Clear and Bright */}
-      <div className="absolute inset-0 z-0 text-white">
+    <section className="relative overflow-hidden min-h-[90dvh] flex items-center pt-24 pb-16 lg:pt-32 lg:pb-24">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
         <Image 
           src="/WhatsApp Image 2026-03-17 at 3.16.49 PM.JPG"
-          alt="DASA Hero Background"
+          alt="DASA Students at UPSA"
           fill
           priority
-          className="object-cover"
+          className="object-cover object-center"
         />
-        {/* Very subtle gradient overlay just to ensure text contrast if image is extremely light */}
-        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"></div>
+        {/* Dark overlay for text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/65 to-black/50 backdrop-blur-[1px]"></div>
       </div>
 
-      <div className="container mx-auto relative z-10 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
-        >
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-DASA-orange text-DASA-black text-sm font-black tracking-widest uppercase mb-6 shadow-2xl"
-          >
-            <Sparkles size={16} className="text-white animate-pulse" />
-            Empowering Accounting Excellence
-          </motion.div>
+      <div className="container relative z-20 mx-auto px-4 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
           
-          <h1 className="text-5xl md:text-8xl font-black mb-6 leading-none tracking-tighter uppercase 
-            bg-clip-text text-transparent bg-linear-to-b from-white to-white/60
-            drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] mix-blend-overlay"
-          >
-            Welcome to <span className="text-DASA-orange brightness-150">DASA</span>
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white leading-[1.08] tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+            Department of Accounting Students Association
           </h1>
           
-          <p className="text-xl md:text-2xl text-white max-w-2xl mx-auto leading-relaxed font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mix-blend-overlay">
-            The central hub for academic excellence, professional growth, and departmental innovation at the University of Professional Studies, Accra.
+          <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl leading-relaxed font-medium mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
+            Access academic resources, discover departmental news, and accelerate your professional growth at the University of Professional Studies, Accra.
           </p>
-        </motion.div>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
+            <Link 
+              href="/academic-bank" 
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-DASA-orange text-white rounded-xl font-bold hover:bg-orange-600 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-DASA-orange/25"
+            >
+              Explore Academic Bank <ArrowRight size={18} />
+            </Link>
+            <Link 
+              href="/activities" 
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 text-white border border-white/20 rounded-xl font-bold hover:bg-white/20 active:scale-[0.98] backdrop-blur-sm transition-all duration-150 shadow-lg"
+            >
+              View Latest Activities
+            </Link>
+          </div>
+          
+        </div>
       </div>
     </section>
   )

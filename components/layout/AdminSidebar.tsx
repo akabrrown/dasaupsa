@@ -59,14 +59,15 @@ export default function AdminSidebar({ mustChangePassword = false }: { mustChang
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-DASA-black flex items-center justify-between px-4 z-50 border-b border-blue-900/50">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-DASA-black flex items-center justify-between px-4 z-50 border-b border-gray-900">
         <Link href="/" className="flex items-center gap-2">
           <Image 
             src="/dasa-logo.jpg" 
             alt="Logo" 
             width={32} 
             height={32} 
-            className="rounded-full object-cover h-8 w-8" 
+            className="rounded-full object-cover" 
+            style={{ height: 'auto', width: 'auto' }}
           />
           <span className="font-bold text-white text-sm">DASA Admin</span>
         </Link>
@@ -92,13 +93,14 @@ export default function AdminSidebar({ mustChangePassword = false }: { mustChang
         transform transition-transform duration-300 ease-in-out h-full flex flex-col
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="hidden lg:flex items-center gap-3 mb-10 pb-6 border-b border-blue-900/50">
+        <div className="hidden lg:flex items-center gap-3 mb-10 pb-6 border-b border-gray-900">
           <Image 
             src="/dasa-logo.jpg" 
             alt="DASA Logo" 
             width={48} 
             height={48} 
-            className="rounded-full object-cover shadow-xl ring-2 ring-DASA-orange/20 h-12 w-12" 
+            className="rounded-full object-cover shadow-xl ring-2 ring-DASA-orange/20" 
+            style={{ height: 'auto', width: 'auto' }}
           />
           <div>
             <h2 className="text-lg font-black text-white leading-tight">Admin Panel</h2>
@@ -116,8 +118,8 @@ export default function AdminSidebar({ mustChangePassword = false }: { mustChang
                 className={`
                   flex items-center justify-between group p-3 rounded-xl transition-all duration-200
                   ${isActive 
-                    ? 'bg-DASA-orange text-DASA-black font-bold shadow-lg scale-[1.02]' 
-                    : 'text-blue-100 hover:bg-white/5 hover:text-white'}
+                    ? 'bg-DASA-orange text-DASA-black font-bold shadow-md' 
+                    : 'text-gray-300 hover:bg-white/5 hover:text-white'}
                 `}
               >
                 <div className="flex items-center gap-3">
@@ -136,9 +138,9 @@ export default function AdminSidebar({ mustChangePassword = false }: { mustChang
           )}
         </nav>
 
-        <div className="mt-8 pt-6 border-t border-blue-900/50 space-y-4">
+        <div className="mt-8 pt-6 border-t border-gray-900 space-y-4">
           {!mustChangePassword && (
-            <Link href="/" className="flex items-center gap-3 p-3 rounded-xl text-blue-200 hover:text-white hover:bg-white/5 transition-all text-sm">
+            <Link href="/" className="flex items-center gap-3 p-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all text-sm">
               <BookOpen size={18} />
               View Live Site
             </Link>

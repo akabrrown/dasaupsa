@@ -64,15 +64,7 @@ export default function TutorialDetailClient({ tutorial, relatedTutorials, isBoo
     setLoading(true)
     setActionType('bookmark')
     try {
-      // Note: We'll repurpose the same bookmarks table or just use one for all resources? 
-      // The schema I created was for academic_resources. 
-      // I should probably have a separate one or a polymorphic one.
-      // For now, I'll just handle the tutorial bookmarking if I had a table.
-      // Let's check if the user wanted bookmarks for tutorials too. 
-      // "the bookmark feature activate it" - usually means for resources.
-      // I'll skip tutorial bookmarking for now unless I update the schema again.
-      // Wait, let's just make it work for tutorials if possible.
-      console.log('Tutorial bookmarking coming soon!')
+      // Future expansion for tutorial-specific bookmarks
     } finally {
       setLoading(false)
       setActionType(null)
@@ -92,7 +84,7 @@ export default function TutorialDetailClient({ tutorial, relatedTutorials, isBoo
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="grow">
               <div className="flex items-center gap-3 mb-3">
-                <span className="px-3 py-1 bg-blue-50 text-DASA-black text-xs font-bold rounded-full uppercase tracking-wider">
+                <span className="px-3 py-1 bg-orange-50 text-DASA-orange border border-DASA-orange/25 text-xs font-bold rounded-full uppercase tracking-wider">
                   {tutorial.course_code || tutorial.course}
                 </span>
                 <span className="text-gray-400 text-sm">
@@ -162,7 +154,7 @@ export default function TutorialDetailClient({ tutorial, relatedTutorials, isBoo
             {/* Description & Metadata */}
             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
               <h2 className="text-2xl font-bold text-DASA-black mb-4">About this Tutorial</h2>
-              <div className="prose prose-blue max-w-none text-gray-600 whitespace-pre-line leading-relaxed">
+              <div className="prose prose-neutral max-w-none text-gray-600 whitespace-pre-line leading-relaxed">
                 {tutorial.description}
               </div>
             </div>

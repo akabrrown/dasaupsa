@@ -14,27 +14,26 @@ interface GalleryItem {
 }
 
 interface GalleryPageClientProps {
-  items: GalleryItem[]
+  galleryPhotos: GalleryItem[]
 }
 
-export default function GalleryPageClient({ items }: GalleryPageClientProps) {
+export default function GalleryPageClient({ galleryPhotos }: GalleryPageClientProps) {
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null)
 
   return (
-    <div className="min-h-screen bg-light-orange pb-20">
-      {/* Hero Header - Matched with About Us */}
-      <section className="bg-DASA-orange py-20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-white/10 skew-x-12 translate-x-20 z-0"></div>
-        <div className="container mx-auto px-4 relative z-10">
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* Hero Header */}
+      <section className="bg-white border-b border-gray-200 py-16 md:py-24">
+        <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:max-w-3xl"
+            className="max-w-3xl"
           >
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-DASA-black">
-              Departmental <span className="text-white">Gallery</span>
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 tracking-tight">
+              Departmental Gallery
             </h1>
-            <p className="text-xl text-DASA-black/80 font-medium leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed">
               Capturing the moments, events, and milestones that define the Department of Accounting Student Association at UPSA.
             </p>
           </motion.div>
@@ -42,36 +41,39 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
       </section>
 
       {/* Gallery Grid */}
-      <div className="container mx-auto px-4 -mt-20 relative z-30">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {items.map((item, index) => (
+      <div className="container mx-auto px-4 lg:px-8 mt-12">
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+          {galleryPhotos.map((photo, index) => (
             <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.9 }}
+              key={photo.id}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
-              whileHover={{ y: -5 }}
-              className="group relative aspect-square bg-gray-100 rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500"
-              onClick={() => setSelectedImage(item)}
+              className="group relative break-inside-avoid bg-gray-100 rounded-lg overflow-hidden cursor-pointer mb-4"
+              onClick={() => setSelectedImage(photo)}
             >
-              <Image
-                src={item.image_url}
-                alt={item.title || 'Gallery image'}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-DASA-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+              {/* Note: since height varies in masonry, we remove aspect-square and use a relative wrapper that fits content.
+                  But next/image needs width/height or layout fill. If we don't have aspect ratio, we'll need to just render an img or a fill with aspect ratio if known. Since we don't have specific width/height, we'll keep a relative aspect if needed or use object-cover. Wait, for actual masonry without aspect ratio we need next/image with layout responsive or similar. Next 13+ Image without width/height is tricky unless it's a known aspect. I'll use a placeholder aspect or leave it if we can't do true masonry. Actually, we'll just keep aspect-square to avoid layout shift, but the column layout itself is editorial. */}
+              <div className="relative aspect-square w-full">
+                <Image
+                  src={photo.image_url}
+                  alt={photo.title || 'Gallery image'}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+              <div className="absolute inset-0 bg-linear-to-t from-gray-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
                 <div className="flex justify-between items-end">
                   <div>
-                    {item.title && <h3 className="text-white font-bold text-lg leading-tight mb-1">{item.title}</h3>}
-                    <div className="flex items-center text-DASA-orange text-[10px] font-black uppercase tracking-widest">
+                    {photo.title && <h3 className="text-white font-bold text-base leading-tight mb-1">{photo.title}</h3>}
+                    <div className="flex items-center text-gray-300 text-[10px] font-bold uppercase tracking-wider">
                       <Calendar size={12} className="mr-1.5" />
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {new Date(photo.created_at).toLocaleDateString()}
                     </div>
                   </div>
-                  <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl text-white">
-                    <Maximize2 size={18} />
+                  <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg text-white">
+                    <Maximize2 size={16} />
                   </div>
                 </div>
               </div>
@@ -79,11 +81,11 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
           ))}
         </div>
 
-        {items.length === 0 && (
-          <div className="text-center py-20 bg-gray-50 rounded-[40px] border-2 border-dashed border-gray-200">
-            <Info className="mx-auto text-gray-300 mb-4" size={48} />
-            <h3 className="text-xl font-bold text-gray-500">No images in the gallery yet.</h3>
-            <p className="text-gray-400">Our memories are currently being processed. Check back soon!</p>
+        {galleryPhotos.length === 0 && (
+          <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+            <Info className="mx-auto text-gray-300 mb-3" size={32} />
+            <h3 className="text-lg font-bold text-gray-900 mb-1">No images in the gallery yet.</h3>
+            <p className="text-sm text-gray-500">Our memories are currently being processed. Check back soon.</p>
           </div>
         )}
       </div>
@@ -95,27 +97,27 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 bg-DASA-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10"
+            className="fixed inset-0 z-[100] bg-gray-900/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
             onClick={() => setSelectedImage(null)}
           >
             <button 
-              className="absolute top-6 right-6 text-white/50 hover:text-white bg-white/10 p-3 rounded-full transition-colors z-110"
+              className="absolute top-4 right-4 md:top-8 md:right-8 text-gray-400 hover:text-white bg-white/10 p-2.5 rounded-lg transition-colors z-[110]"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedImage(null);
               }}
             >
-              <X size={24} />
+              <X size={20} />
             </button>
             
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              exit={{ scale: 0.95, opacity: 0 }}
               className="relative max-w-5xl w-full h-full max-h-[85vh] flex flex-col items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative w-full h-full overflow-hidden">
                 <Image
                   src={selectedImage.image_url}
                   alt={selectedImage.title || 'Lightbox view'}
@@ -126,12 +128,12 @@ export default function GalleryPageClient({ items }: GalleryPageClientProps) {
               
               <div className="mt-6 text-center">
                 {selectedImage.title && (
-                  <h2 className="text-2xl font-black text-white mb-2">{selectedImage.title}</h2>
+                  <h2 className="text-xl font-bold text-white mb-2">{selectedImage.title}</h2>
                 )}
                 {selectedImage.description && (
-                  <p className="text-gray-400 max-w-xl mx-auto">{selectedImage.description}</p>
+                  <p className="text-sm text-gray-300 max-w-xl mx-auto">{selectedImage.description}</p>
                 )}
-                <p className="text-DASA-orange font-bold uppercase tracking-widest text-xs mt-4">
+                <p className="text-gray-500 font-semibold uppercase tracking-widest text-[10px] mt-3">
                   Posted on {new Date(selectedImage.created_at).toLocaleDateString()}
                 </p>
               </div>

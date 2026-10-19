@@ -16,43 +16,43 @@ interface AnnouncementProps {
 export default function AnnouncementCard({ id, title, body, image, isPinned, createdAt }: AnnouncementProps) {
   return (
     <Link href={`/announcements/${id}`} className="block group h-full">
-      <Card className="overflow-hidden glass-card hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-none flex flex-col h-full rounded-[24px]">
+      <Card className="overflow-hidden bg-white shadow-sm border border-gray-200 hover:border-DASA-orange/40 hover:shadow-md transition-all duration-200 flex flex-col h-full rounded-xl">
       {image && (
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-48 overflow-hidden bg-gray-50">
           <Image 
             src={image} 
             alt={title} 
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110" 
+            className="object-cover transition-transform duration-700 group-hover:scale-105" 
           />
           {isPinned && (
-            <Badge className="absolute top-4 left-4 bg-DASA-orange text-DASA-black border-none font-bold z-10">
+            <Badge className="absolute top-3 left-3 bg-DASA-black text-white border-none font-bold z-10 uppercase text-[10px] tracking-wider px-2 py-0.5 shadow-sm">
               Pinned
             </Badge>
           )}
         </div>
       )}
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3 pt-5 px-5">
         {!image && isPinned && (
-          <Badge className="w-fit mb-2 bg-DASA-orange text-DASA-black border-none font-bold">
+          <Badge className="w-fit mb-3 bg-DASA-black text-white border-none font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 shadow-sm">
             Pinned
           </Badge>
         )}
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-xl font-bold leading-snug text-DASA-black group-hover:text-DASA-orange transition-colors">
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="text-lg font-bold leading-snug text-gray-900 group-hover:text-DASA-orange transition-colors">
             {title}
           </CardTitle>
-          <Megaphone size={20} className="text-DASA-orange shrink-0 mt-1 opacity-60" />
+          <ArrowRight size={18} className="text-DASA-orange shrink-0 mt-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
         </div>
       </CardHeader>
-      <CardContent className="grow">
-        <p className="text-gray-600 line-clamp-3 leading-relaxed">
+      <CardContent className="grow px-5">
+        <p className="text-gray-500 text-sm line-clamp-3 leading-relaxed">
           {body}
         </p>
       </CardContent>
-      <CardFooter className="pt-4 border-t border-gray-50 flex items-center text-xs text-gray-400">
-        <Calendar size={14} className="mr-2" />
+      <CardFooter className="pt-4 pb-5 px-5 flex items-center text-[11px] font-medium text-gray-400 uppercase tracking-widest mt-auto">
+        <Calendar size={12} className="mr-2" />
         {createdAt ? new Intl.DateTimeFormat('en-US', { 
           month: 'short', 
           day: '2-digit', 

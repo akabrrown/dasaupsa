@@ -18,8 +18,8 @@ import { Button } from '@/components/ui/button'
 import GalleryForm from '@/components/admin/GalleryForm'
 
 export default function AdminGalleryClient() {
-  const [items, setItems] = useState<any[]>([])
-  const [editing, setEditing] = useState<any>(null)
+  const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
+  const [editingPhoto, setEditingPhoto] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -29,12 +29,12 @@ export default function AdminGalleryClient() {
 
   const fetchGallery = async () => {
     setLoading(true)
-    const { data, error } = await supabase
+    const { data: fetchedPhotos, error } = await supabase
       .from('gallery')
       .select('*')
       .order('created_at', { ascending: false })
     
-    if (!error) setItems(data || [])
+    if (!error) setGalleryPhotos(fetchedPhotos || [])
     setLoading(false)
   }
 
@@ -45,9 +45,9 @@ export default function AdminGalleryClient() {
     }
   }
 
-  const filteredItems = items.filter(item => 
-    (item.title?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
-    (item.description?.toLowerCase().includes(searchTerm.toLowerCase()) || '')
+  const filteredPhotos = galleryPhotos.filter(photo => 
+    (photo.title?.toLowerCase().includes(searchTerm.toLowerCase()) || '') ||
+    (photo.description?.toLowerCase().includes(searchTerm.toLowerCase()) || '')
   )
 
   return (
@@ -58,7 +58,7 @@ export default function AdminGalleryClient() {
           <p className="text-gray-500 font-medium">Capture and manage departmental moments</p>
         </div>
         <Button 
-          onClick={() => setEditing({})} 
+          onClick={() => setEditingPhoto({})} 
           className="bg-DASA-black hover:bg-DASA-orange text-white px-6 py-6 rounded-2xl font-bold transition-all shadow-lg shadow-DASA-black/20 flex items-center gap-2"
         >
           <Plus size={20} />
@@ -82,12 +82,12 @@ export default function AdminGalleryClient() {
           <Loader2 className="animate-spin text-DASA-black" size={40} />
           <p className="font-bold">Loading gallery...</p>
         </div>
-      ) : filteredItems.length > 0 ? (
+      ) : filteredPhotos.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <AnimatePresence mode="popLayout">
-            {filteredItems.map((item, index) => (
+            {filteredPhotos.map((photo, index) => (
               <motion.div
-                key={item.id}
+                key={photo.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -95,12 +95,12 @@ export default function AdminGalleryClient() {
               >
                 <Card className="group border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-[24px] overflow-hidden bg-white h-full flex flex-col">
                   <div className="relative aspect-square overflow-hidden">
-                    <img src={item.image_url} alt={item.title || 'Gallery item'} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={photo.image_url} alt={photo.title || 'Gallery image'} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <Button 
                         size="icon"
                         variant="secondary"
-                        onClick={() => setEditing(item)}
+                        onClick={() => setEditingPhoto(photo)}
                         className="rounded-full bg-white text-DASA-black hover:bg-DASA-orange hover:text-white"
                       >
                         <Edit3 size={18} />
@@ -108,19 +108,19 @@ export default function AdminGalleryClient() {
                       <Button 
                         size="icon"
                         variant="secondary"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(photo.id)}
                         className="rounded-full bg-white text-red-500 hover:bg-red-500 hover:text-white"
                       >
                         <Trash2 size={18} />
                       </Button>
                     </div>
                   </div>
-                  {(item.title || item.description) && (
+                  {(photo.title || photo.description) && (
                     <CardContent className="p-4">
-                      {item.title && <h3 className="text-sm font-bold text-DASA-black mb-1 line-clamp-1 truncate">{item.title}</h3>}
+                      {photo.title && <h3 className="text-sm font-bold text-DASA-black mb-1 line-clamp-1 truncate">{photo.title}</h3>}
                       <div className="flex items-center gap-2 text-[8px] font-bold text-gray-400 uppercase tracking-widest">
                         <Calendar size={10} className="text-DASA-orange" />
-                        {new Date(item.created_at).toLocaleDateString()}
+                        {new Date(photo.created_at).toLocaleDateString()}
                       </div>
                     </CardContent>
                   )}
@@ -139,14 +139,14 @@ export default function AdminGalleryClient() {
         </div>
       )}
 
-      {editing && (
+      {editingPhoto && (
         <GalleryForm 
-          item={editing} 
+          galleryPhotoData={editingPhoto} 
           onSave={() => {
-            setEditing(null)
+            setEditingPhoto(null)
             fetchGallery()
           }} 
-          onCancel={() => setEditing(null)}
+          onCancel={() => setEditingPhoto(null)}
         />
       )}
     </div>

@@ -11,15 +11,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { revalidateData } from '@/lib/actions/data'
 
 interface GalleryFormProps {
-  item: any
+  galleryPhotoData: any
   onSave: () => void
   onCancel: () => void
 }
 
-export default function GalleryForm({ item, onSave, onCancel }: GalleryFormProps) {
-  const [title, setTitle] = useState(item.title || '')
-  const [description, setDescription] = useState(item.description || '')
-  const [imageUrl, setImageUrl] = useState(item.image_url || '')
+export default function GalleryForm({ galleryPhotoData, onSave, onCancel }: GalleryFormProps) {
+  const [title, setTitle] = useState(galleryPhotoData.title || '')
+  const [description, setDescription] = useState(galleryPhotoData.description || '')
+  const [imageUrl, setImageUrl] = useState(galleryPhotoData.image_url || '')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,11 +40,11 @@ export default function GalleryForm({ item, onSave, onCancel }: GalleryFormProps
     }
 
     try {
-      if (item.id) {
+      if (galleryPhotoData.id) {
         const { error } = await supabase
           .from('gallery')
           .update(payload)
-          .eq('id', item.id)
+          .eq('id', galleryPhotoData.id)
         if (error) throw error
       } else {
         const { error } = await supabase
@@ -75,7 +75,7 @@ export default function GalleryForm({ item, onSave, onCancel }: GalleryFormProps
                 <ImageIcon size={24} className="text-DASA-orange" />
               </div>
               <CardTitle className="text-2xl font-bold">
-                {item.id ? 'Edit Gallery Item' : 'Add to Gallery'}
+                {galleryPhotoData.id ? 'Edit Gallery Item' : 'Add to Gallery'}
               </CardTitle>
             </div>
             <button onClick={onCancel} className="p-2 hover:bg-white/10 rounded-full transition-colors">
@@ -135,7 +135,7 @@ export default function GalleryForm({ item, onSave, onCancel }: GalleryFormProps
               className="flex-1 py-6 bg-DASA-black hover:bg-DASA-orange text-white font-bold rounded-2xl transition-all shadow-lg shadow-DASA-black/10 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-              {item.id ? 'Save Changes' : 'Upload to Gallery'}
+              {galleryPhotoData.id ? 'Save Changes' : 'Upload to Gallery'}
             </Button>
           </div>
         </CardContent>

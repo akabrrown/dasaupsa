@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import ResourceCard from '@/components/sections/ResourceCard'
+import { ResourceCardSkeleton } from '@/components/ui/Skeletons'
 import { Search, Filter, Book, FileText, DownloadCloud, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getBookmarkedResources } from '@/lib/actions/bookmarks'
@@ -50,7 +51,7 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
     // Search matches title parts, course code, or program name
     const titleParts = r.title.split('|').map((s: string) => s.trim().toLowerCase())
     const matchesSearch = search === '' || 
-                          titleParts.some(part => part.includes(search.toLowerCase())) || 
+                          titleParts.some((part: string) => part.includes(search.toLowerCase())) || 
                           (r.course_code && r.course_code.toLowerCase().includes(search.toLowerCase())) ||
                           programNames.some((name: string) => name.includes(search.toLowerCase()));
     
@@ -112,68 +113,55 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
   }
 
   return (
-    <div className="bg-light-orange min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pb-24">
       {/* Header Section */}
-      <section className="bg-linear-to-br from-DASA-orange to-[#FF8C61] py-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-white/10 skew-x-12 translate-x-20"></div>
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-6 inline-block p-3 bg-white/20 rounded-2xl backdrop-blur-sm"
-          >
-            <DownloadCloud size={40} className="text-DASA-black" />
-          </motion.div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-DASA-black">Academic Bank</h1>
-          <p className="text-DASA-black/80 text-lg max-w-2xl mx-auto font-medium">
-            Your centralized repository for all academic materials. Download slides, 
-            past questions, and more to boost your academic performance.
-          </p>
+      <section className="bg-white border-b border-gray-200 py-12">
+        <div className="container mx-auto px-4 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold mb-2 text-gray-900 tracking-tight">Academic Bank</h1>
+            <p className="text-gray-500 text-sm md:text-base max-w-xl font-medium">
+              Your centralized repository for all academic materials. Download slides, 
+              past questions, and more to boost your academic performance.
+            </p>
+          </div>
+          <div className="hidden md:flex p-3 bg-gray-50 rounded-xl border border-gray-100">
+            <DownloadCloud size={28} className="text-gray-400" />
+          </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 -mt-8 relative z-20">
-        {/* Controls Bar */}
-        <div className="bg-white p-4 md:p-6 rounded-[32px] shadow-xl space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative grow">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                placeholder="Search by title, course code, or program..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  if (e.target.value) {
-                    setCurrentCourse(null)
-                    setCurrentFolderType(null)
-                  }
-                }}
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all font-medium text-DASA-black placeholder:text-gray-400"
-              />
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <div className="relative grow md:grow-0">
-                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <select 
-                  value={selectedProgram} 
-                  onChange={(e) => setSelectedProgram(e.target.value)}
-                  disabled={loading}
-                  className="w-full pl-12 pr-10 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all appearance-none cursor-pointer font-bold text-gray-700 min-w-[180px]"
-                >
-                  <option value="All">All Programs</option>
-                  {programs.map(p => (
-                    <option key={p.id} value={p.name}>{p.name}</option>
-                  ))}
-                </select>
+      <div className="container mx-auto px-4 lg:px-8 mt-8 flex flex-col md:flex-row gap-8">
+        
+        {/* Left Sidebar */}
+        <div className="w-full md:w-64 shrink-0 space-y-6">
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">Filters</h3>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Program</label>
+                <div className="relative">
+                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                  <select 
+                    value={selectedProgram} 
+                    onChange={(e) => setSelectedProgram(e.target.value)}
+                    disabled={loading}
+                    className="w-full pl-9 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-DASA-orange/50 transition-all appearance-none cursor-pointer text-sm font-semibold text-gray-700"
+                  >
+                    <option value="All">All Programs</option>
+                    {programs.map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <div className="relative grow md:grow-0 w-1/2 md:w-auto">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Level</label>
                 <select 
                   value={selectedLevel} 
                   onChange={(e) => setSelectedLevel(e.target.value)}
                   disabled={loading}
-                  className="w-full pl-5 pr-10 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all appearance-none cursor-pointer font-bold text-gray-700 min-w-[130px]"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-DASA-orange/50 transition-all appearance-none cursor-pointer text-sm font-semibold text-gray-700"
                 >
                   <option value="All">All Levels</option>
                   {[1, 2, 3, 4].map(y => (
@@ -182,12 +170,13 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                 </select>
               </div>
 
-              <div className="relative grow md:grow-0 w-1/2 md:w-auto">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Semester</label>
                 <select 
                   value={selectedSemester} 
                   onChange={(e) => setSelectedSemester(e.target.value)}
                   disabled={loading}
-                  className="w-full pl-5 pr-10 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-DASA-orange transition-all appearance-none cursor-pointer font-bold text-gray-700 min-w-[140px]"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-DASA-orange/50 transition-all appearance-none cursor-pointer text-sm font-semibold text-gray-700"
                 >
                   <option value="All">All Semesters</option>
                   {[1, 2].map(s => (
@@ -199,11 +188,30 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
           </div>
         </div>
 
-        {/* Results Section */}
-        <div className="mt-12">
+        {/* Main Content Area */}
+        <div className="grow">
+          {/* Search Bar */}
+          <div className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Search by title, course code, or program..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                if (e.target.value) {
+                  setCurrentCourse(null)
+                  setCurrentFolderType(null)
+                }
+              }}
+              className="w-full pl-11 pr-4 py-3 bg-white shadow-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-DASA-orange/50 transition-all font-medium text-sm text-gray-900 placeholder:text-gray-400"
+            />
+          </div>
           {loading ? (
-             <div className="flex justify-center py-24">
-                <Loader2 className="animate-spin text-DASA-orange" size={48} />
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
+               {Array.from({ length: 8 }).map((_, i) => (
+                 <ResourceCardSkeleton key={i} />
+               ))}
              </div>
           ) : (
             <>
@@ -219,50 +227,50 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                       >
                         {Object.entries(groupedByCourse).map(([course, items]) => (
                           <div
                             key={course}
                             onClick={() => setCurrentCourse(course)}
-                            className="group bg-white rounded-[28px] p-6 shadow-sm hover:shadow-xl hover:shadow-DASA-orange/10 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-DASA-orange/20 relative overflow-hidden"
+                            className="group bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 hover:border-DASA-orange/40 relative overflow-hidden flex flex-col justify-between min-h-[140px]"
                           >
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-blue-50 to-transparent rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
-                            <div className="flex items-start justify-between mb-8">
-                              <div className="p-4 bg-blue-50 text-DASA-black rounded-2xl group-hover:-rotate-6 transition-transform">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="text-gray-400 group-hover:text-DASA-orange transition-colors">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
                               </div>
-                              <div className="bg-gray-50 text-gray-500 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
+                              <div className="bg-gray-50 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-gray-100">
                                 {items.length} Files
                               </div>
                             </div>
-                            <h3 className="font-extrabold text-2xl text-DASA-black mb-1 pr-4" title={course}>{course}</h3>
-                            <p className="text-gray-400 font-medium text-sm">Course Folder</p>
+                            <div>
+                              <h3 className="font-bold text-gray-900 text-sm mb-0.5 line-clamp-2 group-hover:text-DASA-orange transition-colors" title={course}>{course}</h3>
+                              <p className="text-gray-400 text-xs">Course Folder</p>
+                            </div>
                           </div>
                         ))}
                       </motion.div>
                     )}
 
-                    {/* VIEW 2: Inside a Course (Shows Slides/Past Qs folders) - Only shown if no folder type is selected and no search OR if course is explicitly selected */}
+                    {/* VIEW 2: Inside a Course (Shows Slides/Past Qs folders) */}
                     {currentCourse && !currentFolderType && (
                       <motion.div 
                         key="types-view"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl"
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl"
                       >
                         <div 
                           onClick={() => setCurrentFolderType('slide')}
-                          className="group bg-white rounded-[32px] p-8 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-blue-100 relative overflow-hidden flex items-center gap-6"
+                          className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 hover:border-DASA-orange/40 flex items-center gap-5"
                         >
-                          <div className="absolute right-0 top-0 w-40 h-40 bg-linear-to-br from-transparent to-blue-50 rounded-bl-full -z-10"></div>
-                          <div className="p-5 bg-blue-50 text-DASA-black rounded-[24px] group-hover:scale-110 transition-transform">
-                            <Book size={40} />
+                          <div className="p-3 bg-gray-50 text-gray-400 rounded-lg group-hover:bg-DASA-black group-hover:text-white transition-colors">
+                            <Book size={24} />
                           </div>
                           <div>
-                            <h3 className="font-extrabold text-3xl text-DASA-black mb-2">Slides</h3>
-                            <div className="inline-flex py-1 px-3 bg-gray-50 text-gray-500 rounded-full text-xs font-bold uppercase tracking-wider">
+                            <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-DASA-orange transition-colors">Lecture Slides</h3>
+                            <div className="text-gray-500 text-xs font-medium">
                               {groupedByCourse[currentCourse]?.filter(r => r.type === 'slide').length || 0} Files
                             </div>
                           </div>
@@ -270,15 +278,14 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
 
                         <div 
                           onClick={() => setCurrentFolderType('past_question')}
-                          className="group bg-white rounded-[32px] p-8 shadow-sm hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-orange-100 relative overflow-hidden flex items-center gap-6"
+                          className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 hover:border-DASA-orange/40 flex items-center gap-5"
                         >
-                          <div className="absolute right-0 top-0 w-40 h-40 bg-linear-to-br from-transparent to-orange-50 rounded-bl-full -z-10"></div>
-                          <div className="p-5 bg-orange-50 text-DASA-orange rounded-[24px] group-hover:scale-110 transition-transform">
-                            <FileText size={40} />
+                          <div className="p-3 bg-gray-50 text-gray-400 rounded-lg group-hover:bg-orange-50 group-hover:text-DASA-orange transition-colors">
+                            <FileText size={24} />
                           </div>
                           <div>
-                            <h3 className="font-extrabold text-3xl text-DASA-black mb-2">Past Qs</h3>
-                            <div className="inline-flex py-1 px-3 bg-gray-50 text-gray-500 rounded-full text-xs font-bold uppercase tracking-wider">
+                            <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-DASA-orange transition-colors">Past Questions</h3>
+                            <div className="text-gray-500 text-xs font-medium">
                               {groupedByCourse[currentCourse]?.filter(r => r.type === 'past_question').length || 0} Files
                             </div>
                           </div>
@@ -293,7 +300,7 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                       >
                         {filteredResources
                           .filter(r => {
@@ -309,9 +316,9 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                             return (
                               <motion.div
                                 key={resource.id}
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
+                                transition={{ delay: index * 0.03 }}
                               >
                                 <ResourceCard 
                                   {...resource} 
@@ -331,7 +338,7 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                           }
                           return getCourseStr(r) === currentCourse && r.type === currentFolderType
                         }).length === 0 && !search && (
-                          <div className="col-span-full py-16 text-center text-gray-400 font-bold bg-white rounded-[40px] border-2 border-dashed border-gray-100">
+                          <div className="col-span-full py-16 text-center text-gray-500 text-sm font-medium bg-white rounded-xl border border-dashed border-gray-300">
                             No files found in this folder.
                           </div>
                         )}
@@ -342,18 +349,18 @@ export default function AcademicBankPageClient({ initialResources }: AcademicBan
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-center py-24 bg-white rounded-[40px] border-2 border-dashed border-gray-100"
+                    className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300"
                   >
-                    <div className="mb-6 inline-block p-8 bg-gray-50 rounded-full">
-                      <Book size={64} className="text-gray-200" />
+                    <div className="mb-4 inline-block p-4 bg-gray-50 rounded-full">
+                      <Book size={32} className="text-gray-300" />
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">No resources found</h3>
-                    <p className="text-gray-500 max-w-sm mx-auto font-medium">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">No resources found</h3>
+                    <p className="text-gray-500 text-sm max-w-xs mx-auto mb-6">
                       We couldn't find any resources matching your criteria.
                     </p>
                     <button 
                       onClick={() => { setSearch(''); setSelectedProgram('All'); setSelectedLevel('All'); setSelectedSemester('All'); setCurrentCourse(null); setCurrentFolderType(null); }}
-                      className="mt-8 px-10 py-4 bg-DASA-black text-white rounded-2xl font-bold hover:bg-DASA-orange transition-all shadow-lg hover:-translate-y-1"
+                      className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors"
                     >
                       Clear all filters
                     </button>

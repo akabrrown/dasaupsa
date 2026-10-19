@@ -15,6 +15,11 @@ export async function getPrograms() {
 
 export async function addProgram(name: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || user.user_metadata?.role !== 'admin') {
+    return { data: null, error: new Error('Unauthorized') }
+  }
+
   const { data, error } = await supabase
     .from('programs')
     .insert([{ name }])
@@ -27,6 +32,11 @@ export async function addProgram(name: string) {
 
 export async function updateProgram(id: string, name: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || user.user_metadata?.role !== 'admin') {
+    return { data: null, error: new Error('Unauthorized') }
+  }
+
   const { data, error } = await supabase
     .from('programs')
     .update({ name, updated_at: new Date().toISOString() })
@@ -40,6 +50,11 @@ export async function updateProgram(id: string, name: string) {
 
 export async function deleteProgram(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || user.user_metadata?.role !== 'admin') {
+    return { error: new Error('Unauthorized') }
+  }
+
   const { error } = await supabase
     .from('programs')
     .delete()

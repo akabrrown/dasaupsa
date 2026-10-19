@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import ActivityCard from '@/components/sections/ActivityCard'
-import { Sparkles, History, Loader2 } from 'lucide-react'
+import { CalendarDays, History, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface ActivitiesPageClientProps {
@@ -17,87 +17,92 @@ export default function ActivitiesPageClient({ initialActivities }: ActivitiesPa
   )
 
   const stats = [
-    { label: 'Upcoming', count: initialActivities.filter(a => a.status === 'upcoming').length, icon: Sparkles, color: 'text-green-500' },
+    { label: 'Upcoming', count: initialActivities.filter(a => a.status === 'upcoming').length, icon: CalendarDays, color: 'text-DASA-orange' },
     { label: 'Past Events', count: initialActivities.filter(a => a.status === 'completed').length, icon: History, color: 'text-gray-500' }
   ]
 
   return (
-    <div className="bg-light-orange min-h-screen pb-20">
+    <div className="bg-gray-50 min-h-screen pb-24">
       {/* Header Section */}
-      <section className="bg-linear-to-br from-DASA-orange to-[#FF8C61] py-20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-white/10 skew-x-12 translate-x-20"></div>
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-DASA-black">Our Activities</h1>
-          <p className="text-DASA-black/80 text-lg max-w-2xl mx-auto leading-relaxed">
-            Stay updated with all the exciting events and activities happening 
-            within the DASA community.
-          </p>
+      <section className="bg-white border-b border-gray-200 py-16 md:py-24">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 tracking-tight">Our Activities</h1>
+            <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed">
+              Stay updated with all the exciting events and activities happening 
+              within the DASA community.
+            </p>
+          </div>
           
-          <div className="grid grid-cols-2 lg:flex justify-center gap-4 md:gap-8 mt-10">
+          <div className="flex flex-wrap gap-4 mt-8">
             {stats.map((stat, i) => (
-              <div key={i} className="flex flex-col items-center p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
-                <stat.icon size={20} className={`${stat.color} mb-2`} />
-                <span className="text-xl md:text-2xl font-black text-white">{stat.count}</span>
-                <span className="text-[10px] text-white/60 uppercase tracking-widest font-black text-center">{stat.label}</span>
+              <div key={i} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200 min-w-[160px]">
+                <div className={`p-2 rounded-lg bg-white shadow-sm border border-gray-100 ${stat.color}`}>
+                  <stat.icon size={18} />
+                </div>
+                <div>
+                  <div className="text-xl font-extrabold text-gray-900 leading-none mb-1">{stat.count}</div>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">{stat.label}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 -mt-8">
-        {/* Filter Bar */}
-        <div className="bg-white p-1.5 rounded-2xl shadow-xl flex justify-center mb-16 max-w-sm mx-auto relative z-20 overflow-x-auto no-scrollbar">
-          {(['all', 'upcoming', 'completed'] as const).map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setFilter(tag)}
-              className={`px-4 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all capitalize grow whitespace-nowrap ${
-                filter === tag 
-                  ? 'bg-DASA-black text-white shadow-md' 
-                  : 'text-gray-500 hover:text-DASA-black'
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-
-        {/* Timeline / Listing */}
-        <div className="max-w-4xl mx-auto space-y-12">
-          {filteredActivities.length > 0 ? (
-            <AnimatePresence mode="popLayout">
-              {filteredActivities.sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime()).map((activity, index) => (
-                <motion.div
-                  key={activity.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="relative group"
+      <div className="container mx-auto px-4 lg:px-8 mt-12">
+        <div className="flex flex-col lg:flex-row gap-12">
+          
+          {/* Sidebar Filters */}
+          <div className="lg:w-64 shrink-0">
+            <div className="bg-white p-2 rounded-xl border border-gray-200 shadow-sm flex lg:flex-col overflow-x-auto no-scrollbar">
+              {(['all', 'upcoming', 'completed'] as const).map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setFilter(tag)}
+                  className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all capitalize whitespace-nowrap text-left ${
+                    filter === tag 
+                      ? 'bg-DASA-black text-white shadow-md' 
+                      : 'text-gray-600 hover:text-DASA-orange hover:bg-orange-50/50'
+                  }`}
                 >
-                  {/* Timeline Line */}
-                  {index !== filteredActivities.length - 1 && (
-                    <div className="absolute left-[24px] md:left-1/3 top-full h-12 w-0.5 bg-gray-200 z-0"></div>
-                  )}
-                  
-                  {/* Timeline Dot */}
-                  <div className={`absolute left-[16px] md:left-[calc(33.333%-1px)] top-12 w-4 h-4 rounded-full border-4 border-white shadow-sm z-10 transition-transform group-hover:scale-150 ${
-                    activity.status === 'upcoming' ? 'bg-green-500' : 'bg-gray-400'
-                  }`}></div>
-
-                  <ActivityCard 
-                    {...activity} 
-                    event_date={activity.completed_at || activity.event_date} 
-                  />
-                </motion.div>
+                  {tag} Activities
+                </button>
               ))}
-            </AnimatePresence>
-          ) : (
-            <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100 italic text-gray-400">
-              No activities listed yet. Stay tuned!
             </div>
-          )}
+          </div>
+
+          {/* Timeline / Listing */}
+          <div className="flex-1 max-w-4xl space-y-8 relative">
+            {/* Timeline track for desktop */}
+            <div className="hidden md:block absolute left-[120px] top-4 bottom-4 w-px bg-gray-200 z-0"></div>
+
+            {filteredActivities.length > 0 ? (
+              <AnimatePresence mode="popLayout">
+                {filteredActivities.sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime()).map((activity, index) => (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="relative"
+                  >
+                    <ActivityCard 
+                      {...activity} 
+                      event_date={activity.completed_at || activity.event_date} 
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            ) : (
+              <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
+                <History className="mx-auto text-gray-300 mb-3" size={32} />
+                <h3 className="text-lg font-bold text-gray-900 mb-1">No activities listed.</h3>
+                <p className="text-sm text-gray-500">Stay tuned for future events and updates.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

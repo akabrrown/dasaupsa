@@ -3,10 +3,25 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// Admin account creation requires service role permissions
 export async function createAdminAccount(formData: { fullName: string, email: string, password?: string }) {
   const cookieStore = await cookies()
   
+  // 1. Authorize the caller
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+      },
+    }
+  )
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (!currentUser || currentUser.user_metadata?.role !== 'admin') {
+    return { success: false, error: 'Unauthorized: Only admins can create new admin accounts.' }
+  }
+
+  // 2. Perform action with service role
   const supabaseAdmin = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!, 
@@ -45,13 +60,9 @@ export async function createAdminAccount(formData: { fullName: string, email: st
 
     if (error) throw error
 
-    // Note: We might want to send a custom email here or just tell the inviter the temp password.
-    // For this implementation, we'll return the temp password to the UI.
-
     return { success: true, user: data.user, tempPassword }
   } catch (error: any) {
     console.error('Error creating admin account details:', error)
-    // Supabase admin errors can be literal strings or objects
     const errorMessage = error.message || (typeof error === 'string' ? error : 'Database error creating new user');
     return { success: false, error: errorMessage }
   }
@@ -115,6 +126,23 @@ export async function getAdmins() {
 
 export async function deleteAdmin(userId: string) {
   const cookieStore = await cookies()
+
+  // 1. Authorize the caller
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+      },
+    }
+  )
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (!currentUser || currentUser.user_metadata?.role !== 'admin') {
+    return { success: false, error: 'Unauthorized: Only admins can delete admin accounts.' }
+  }
+
+  // 2. Perform action with service role
   const supabaseAdmin = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
